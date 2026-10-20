@@ -1,0 +1,1 @@
+"""Cheat modules — each file registers a BaseCheat subclass."""
