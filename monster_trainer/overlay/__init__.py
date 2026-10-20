@@ -1,0 +1,1 @@
+"""Terminal overlay HUD (no injected graphics; pure console)."""
