@@ -1,0 +1,1 @@
+"""Resolved static offsets for MHS3 build 1.3.0.4."""
