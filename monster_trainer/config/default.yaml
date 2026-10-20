@@ -1,0 +1,26 @@
+version: "0.6.2"
+exe_name: "MHS3.exe"
+process_watchdog_interval: 2.5
+overlay_scale: 1.0
+cheats:
+  - name: infinite_health
+    enabled: false
+    hotkey: "F1"
+  - name: infinite_stamina
+    enabled: false
+    hotkey: "F2"
+  - name: max_monstie_bond
+    enabled: false
+    hotkey: "F3"
+  - name: free_item_craft
+    enabled: false
+    hotkey: "F4"
+  - name: instant_kinship_skill
+    enabled: false
+    hotkey: "F5"
+  - name: gene_editor
+    enabled: false
+    hotkey: "F6"
+  - name: no_egg_cooldown
+    enabled: false
+    hotkey: "F7"
