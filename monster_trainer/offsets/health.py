@@ -1,0 +1,4 @@
+# Base-relative offsets for rider HP (build 1.3.0.4)
+RIDER_HP = 0x0F2A1C40
+RIDER_STAMINA = 0x0F2A1C48
+MAX_HP_SENTINEL = 0x7FFFFFFF
