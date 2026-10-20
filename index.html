@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MHS3 Twisted Trainer — Monster Hunter Stories 3: Twisted Reflection Trainer</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-0: #070a18;
+    --bg-1: #0c1230;
+    --bg-2: #131a3d;
+    --ink: #e8ecff;
+    --ink-dim: #a4adcf;
+    --ink-faint: #6f78a0;
+    --accent: #6c8cff;
+    --accent-2: #a06cff;
+    --accent-3: #34e0c0;
+    --card: rgba(255, 255, 255, 0.035);
+    --card-hover: rgba(255, 255, 255, 0.06);
+    --line: rgba(255, 255, 255, 0.09);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg-0);
+    color: var(--ink);
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(ellipse 90% 60% at 15% -10%, rgba(108, 140, 255, 0.22), transparent 60%),
+      radial-gradient(ellipse 80% 55% at 88% 8%, rgba(160, 108, 255, 0.18), transparent 60%),
+      radial-gradient(ellipse 70% 60% at 50% 110%, rgba(52, 224, 192, 0.10), transparent 60%),
+      linear-gradient(165deg, #070a18 0%, #0c1230 45%, #0a0f26 100%);
+  }
+
+  .wrap {
+    width: 100%;
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ---------- NAV ---------- */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(18px) saturate(150%);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+    background: rgba(10, 14, 34, 0.62);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    height: 68px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+    font-size: 1.02rem;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .brand-mark {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    display: grid;
+    place-items: center;
+    font-size: 0.95rem;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    box-shadow: 0 0 18px rgba(108, 140, 255, 0.45);
+  }
+
+  .brand span.hl {
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--ink-dim);
+    text-decoration: none;
+    font-size: 0.92rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+
+  .nav-links a:hover { color: #fff; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    border: none;
+    border-radius: 11px;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+    white-space: nowrap;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #6c8cff 0%, #a06cff 100%);
+    color: #fff;
+    padding: 13px 26px;
+    box-shadow: 0 8px 26px rgba(108, 140, 255, 0.35);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 34px rgba(108, 140, 255, 0.5);
+  }
+
+  .btn-sm { padding: 10px 20px; font-size: 0.88rem; border-radius: 9px; }
+
+  .btn-ghost {
+    background: rgba(255, 255, 255, 0.045);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    padding: 13px 26px;
+  }
+
+  .btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.09);
+    border-color: rgba(255, 255, 255, 0.22);
+    transform: translateY(-2px);
+  }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    padding: 92px 0 80px;
+    text-align: center;
+    position: relative;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(108, 140, 255, 0.35);
+    background: rgba(108, 140, 255, 0.10);
+    color: #b9c6ff;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    margin-bottom: 26px;
+  }
+
+  .pill .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent-3);
+    box-shadow: 0 0 10px var(--accent-3);
+    animation: pulse 2.2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.45; transform: scale(0.78); }
+  }
+
+  h1 {
+    font-size: clamp(2.1rem, 6vw, 3.9rem);
+    line-height: 1.08;
+    letter-spacing: -0.035em;
+    font-weight: 800;
+    margin-bottom: 22px;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  h1 .grad {
+    background: linear-gradient(100deg, #7f9bff 0%, #b07dff 48%, #4ce6c8 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .hero p.lead {
+    max-width: 660px;
+    margin: 0 auto 38px;
+    color: var(--ink-dim);
+    font-size: clamp(1rem, 2vw, 1.12rem);
+  }
+
+  .hero-actions {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 46px;
+  }
+
+  .hero-actions .btn { padding: 15px 32px; font-size: 1rem; }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .stat {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px 12px;
+    text-align: center;
+    backdrop-filter: blur(6px);
+  }
+
+  .stat .val {
+    display: block;
+    font-weight: 800;
+    font-size: 1.02rem;
+    letter-spacing: -0.015em;
+    background: linear-gradient(90deg, #aebfff, #d3b6ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 3px;
+  }
+
+  .stat .lbl {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--ink-faint);
+    font-weight: 600;
+  }
+
+  /* ---------- SECTIONS ---------- */
+  section { padding: 78px 0; }
+
+  .sec-head {
+    text-align: center;
+    max-width: 640px;
+    margin: 0 auto 52px;
+  }
+
+  .sec-tag {
+    display: inline-block;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+
+  h2 {
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    letter-spacing: -0.03em;
+    line-height: 1.18;
+    font-weight: 800;
+    margin-bottom: 14px;
+  }
+
+  .sec-head p {
+    color: var(--ink-dim);
+    font-size: 1rem;
+  }
+
+  /* ---------- FEATURES ---------- */
+  .features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .fcard {
+    position: relative;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 28px 24px 26px;
+    overflow: hidden;
+    transition: transform 0.24s ease, background 0.24s ease, border-color 0.24s ease, box-shadow 0.24s ease;
+  }
+
+  .fcard::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent-3));
+    opacity: 0.85;
+  }
+
+  .fcard:hover {
+    transform: translateY(-6px);
+    background: var(--card-hover);
+    border-color: rgba(108, 140, 255, 0.38);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(108, 140, 255, 0.12);
+  }
+
+  .fcard .ico {
+    font-size: 1.7rem;
+    line-height: 1;
+    margin-bottom: 16px;
+    display: inline-grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba(108, 140, 255, 0.12);
+    border: 1px solid rgba(108, 140, 255, 0.2);
+  }
+
+  .fcard h3 {
+    font-size: 1.04rem;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    margin-bottom: 8px;
+  }
+
+  .fcard p {
+    color: var(--ink-dim);
+    font-size: 0.9rem;
+    line-height: 1.65;
+  }
+
+  /* ---------- HOW IT WORKS ---------- */
+  .steps {
+    position: relative;
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 34px;
+  }
+
+  .steps::before {
+    content: "";
+    position: absolute;
+    left: 27px;
+    top: 28px;
+    bottom: 28px;
+    width: 2px;
+    background: linear-gradient(180deg, var(--accent), var(--accent-2) 50%, var(--accent-3));
+    opacity: 0.55;
+    border-radius: 2px;
+  }
+
+  .step {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    position: relative;
+  }
+
+  .step-num {
+    flex: 0 0 auto;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: #fff;
+    background: linear-gradient(135deg, #141b3f, #1d2554);
+    border: 1px solid rgba(108, 140, 255, 0.5);
+    box-shadow: 0 0 0 6px rgba(7, 10, 24, 1), 0 0 24px rgba(108, 140, 255, 0.35);
+    z-index: 1;
+  }
+
+  .step-body {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 20px 24px;
+    flex: 1;
+  }
+
+  .step-body h3 {
+    font-size: 1.02rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+
+  .step-body p {
+    color: var(--ink-dim);
+    font-size: 0.9rem;
+  }
+
+  /* ---------- FAQ ---------- */
+  .faq {
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  details {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 13px;
+    overflow: hidden;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+
+  details[open] {
+    border-color: rgba(108, 140, 255, 0.4);
+    background: rgba(108, 140, 255, 0.06);
+  }
+
+  summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 19px 22px;
+    font-weight: 600;
+    font-size: 0.97rem;
+    color: var(--ink);
+    user-select: none;
+  }
+
+  summary::-webkit-details-marker { display: none; }
+
+  .plus {
+    flex: 0 0 auto;
+    width: 22px;
+    height: 22px;
+    position: relative;
+    transition: transform 0.28s ease;
+  }
+
+  .plus::before,
+  .plus::after {
+    content: "";
+    position: absolute;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: transform 0.28s ease, opacity 0.28s ease;
+  }
+
+  .plus::before {
+    left: 50%;
+    top: 2px;
+    bottom: 2px;
+    width: 2px;
+    transform: translateX(-50%);
+  }
+
+  .plus::after {
+    top: 50%;
+    left: 2px;
+    right: 2px;
+    height: 2px;
+    transform: translateY(-50%);
+  }
+
+  details[open] .plus { transform: rotate(135deg); }
+
+  .faq-a {
+    padding: 0 22px 20px;
+    color: var(--ink-dim);
+    font-size: 0.9rem;
+    line-height: 1.7;
+  }
+
+  /* ---------- CTA BANNER ---------- */
+  .cta-banner {
+    position: relative;
+    overflow: hidden;
+    border-radius: 22px;
+    border: 1px solid rgba(108, 140, 255, 0.28);
+    background: linear-gradient(135deg, rgba(20, 27, 63, 0.9), rgba(13, 18, 44, 0.9));
+    padding: 62px 34px;
+    text-align: center;
+  }
+
+  .cta-banner::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 720px;
+    height: 720px;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(108, 140, 255, 0.30) 0%, rgba(160, 108, 255, 0.14) 38%, transparent 68%);
+    pointer-events: none;
+  }
+
+  .cta-banner > * { position: relative; z-index: 1; }
+
+  .cta-banner h2 { margin-bottom: 12px; }
+
+  .cta-banner p {
+    color: var(--ink-dim);
+    max-width: 520px;
+    margin: 0 auto 30px;
+    font-size: 0.98rem;
+  }
+
+  .cta-banner .btn { padding: 15px 34px; font-size: 1rem; }
+
+  .cta-note {
+    margin-top: 18px;
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+    letter-spacing: 0.02em;
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 34px 0;
+    margin-top: 20px;
+  }
+
+  .foot-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+
+  .foot-inner p {
+    color: var(--ink-faint);
+    font-size: 0.84rem;
+  }
+
+  .foot-inner a {
+    color: var(--ink-dim);
+    text-decoration: none;
+    font-size: 0.84rem;
+    font-weight: 600;
+    transition: color 0.2s ease;
+  }
+
+  .foot-inner a:hover { color: #fff; }
+
+  .foot-links { display: flex; gap: 22px; align-items: center; }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 900px) {
+    .features { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 640px) {
+    .nav-inner { height: 62px; }
+    .nav-links { display: none; }
+    .hero { padding: 62px 0 56px; }
+    section { padding: 58px 0; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .features { grid-template-columns: 1fr; }
+    .hero-actions { flex-direction: column; align-items: stretch; }
+    .hero-actions .btn { width: 100%; }
+    .steps::before { left: 21px; }
+    .step { gap: 16px; }
+    .step-num { width: 44px; height: 44px; font-size: 0.95rem; }
+    .step-body { padding: 17px 18px; }
+    .cta-banner { padding: 46px 22px; border-radius: 18px; }
+    .cta-banner .btn { width: 100%; }
+    .foot-inner { flex-direction: column; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="#top">
+        <span class="brand-mark">🗡️</span>
+        <span>MHS3 <span class="hl">Twisted Trainer</span></span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+      <a class="btn btn-primary btn-sm" href="https://gitscore.cc" target="_blank" rel="noopener">Download</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero" id="top">
+    <div class="wrap">
+      <div class="pill"><span class="dot"></span> mhs3-twisted-trainer · v2.4.0</div>
+      <h1>Unleash Every <span class="grad">Monster</span> in Twisted Reflection</h1>
+      <p class="lead">
+        A free, open-source trainer for Monster Hunter Stories 3: Twisted Reflection. Toggle infinite HP,
+        max zenny, instant monster leveling, a full egg gene editor, and one-hit kill — all from a clean
+        Windows overlay built for the PC release.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://gitscore.cc" target="_blank" rel="noopener">⬇ Download for Windows</a>
+        <a class="btn btn-ghost" href="https://gitscore.cc" target="_blank" rel="noopener">★ View on GitHub</a>
+      </div>
+      <div class="stats">
+        <div class="stat"><span class="val">128,400+</span><span class="lbl">Downloads</span></div>
+        <div class="stat"><span class="val">v2.4.0</span><span class="lbl">Latest Version</span></div>
+        <div class="stat"><span class="val">Windows 10 / 11</span><span class="lbl">Platform</span></div>
+        <div class="stat"><span class="val">Free &amp; Open Source</span><span class="lbl">License</span></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="sec-tag">Features</span>
+        <h2>Everything You Need to Master the Wilds</h2>
+        <p>Six tightly integrated cheats built specifically for the Twisted Reflection expansion, tuned to the current PC patch.</p>
+      </div>
+      <div class="features">
+        <article class="fcard">
+          <div class="ico">❤️</div>
+          <h3>Infinite HP</h3>
+          <p>Lock your rider and monstie health at maximum. Survive any elder dragon encounter without chugging a single potion.</p>
+        </article>
+        <article class="fcard">
+          <div class="ico">💰</div>
+          <h3>Max Zenny</h3>
+          <p>Instantly set your wallet to 9,999,999 zenny. Stock up on gear, upgrades, and stable slots without grinding quests.</p>
+        </article>
+        <article class="fcard">
+          <div class="ico">⚡</div>
+          <h3>Instant Monster Leveling</h3>
+          <p>Jump any monstie to level 99 in one click. Skip the grind and field a competitive team for the Twisted Reflection endgame.</p>
+        </article>
+        <article class="fcard">
+          <div class="ico">🥚</div>
+          <h3>Egg Gene Editor</h3>
+          <p>Inspect and rewrite gene slots on any egg before it hatches. Build perfect bingos with the exact traits you want.</p>
+        </article>
+        <article class="fcard">
+          <div class="ico">⚔️</div>
+          <h3>One-Hit Kill Toggle</h3>
+          <p>Every attack lands for lethal damage. Great for farming rare materials and blasting through story battles.</p>
+        </article>
+        <article class="fcard">
+          <div class="ico">🛡️</div>
+          <h3>Safe Overlay</h3>
+          <p>Single-player only, memory-patch based, and updated within 24 hours of every Monster Hunter Stories 3 patch.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="sec-tag">How it works</span>
+        <h2>Set Up in Under Two Minutes</h2>
+        <p>No installers, no dependencies, no admin scripts. Just download, launch, and hunt.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h3>Download the trainer</h3>
+            <p>Grab the latest <strong>mhs3-twisted-trainer</strong> build from the download page. It
